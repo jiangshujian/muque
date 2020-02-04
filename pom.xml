@@ -27,7 +27,7 @@
 		<jaxen.version>1.1.6</jaxen.version>
 		<joda-time.version>2.9.4</joda-time.version>
 		<guava.version>19.0</guava.version>
-		<spring.version>4.1.1.RELEASE</spring.version>
+		<spring.version>4.3.19.RELEASE</spring.version>
 		<httpcore.version>4.4.3</httpcore.version>
 		<httpclient.version>4.3.6</httpclient.version>
 		<httpmine.version>4.3.6</httpmine.version>
