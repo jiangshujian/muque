@@ -1,0 +1,10 @@
+	
+	public ${columnJType} get${columnJUName}() { 
+		return this.${columnJName};
+	}
+	
+	public void set${columnJUName}(${columnJType} ${columnJName}) {
+		this.${columnJName} = ${columnJName};
+	}
+
+	

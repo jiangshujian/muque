@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	   					   http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+					       http://www.springframework.org/schema/context 
+					       http://www.springframework.org/schema/context/spring-context-3.1.xsd
+						   http://www.springframework.org/schema/aop 
+						   http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+					       http://www.springframework.org/schema/tx 
+					       http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+
+	<bean id="log4jInitialization"
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetClass" value="org.springframework.util.Log4jConfigurer" />
+		<property name="targetMethod" value="initLogging" />
+		<property name="arguments">
+			<value>conf/log4j.xml</value>
+		</property>
+	</bean>
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://127.0.0.1:3306/easyerp" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+
+
+	<bean id="sourceDaoMysql" class="org.muque.mold.codes.dao.impl.SourceDaoMysqlImpl" />
+
+	<bean id="mysqlToJavaTypeMap" class="java.util.HashMap">
+		<constructor-arg>
+			<map key-type="java.lang.String" value-type="java.lang.String">
+				<entry key="tinyint" value="Short" />
+				<entry key="smallint" value="Short" />
+				<entry key="int" value="Integer" />
+				<entry key="bigint" value="Long" />
+				<entry key="float" value="Float" />
+				<entry key="double" value="Double" />
+				<entry key="decimal" value="java.math.BigDecimal" />
+				<entry key="date" value="Date" />
+				<entry key="time" value="Date" />
+				<entry key="datetime" value="Date" />
+				<entry key="timestamp" value="Date" />
+				<entry key="year" value="Inteter" />
+				<entry key="varchar" value="String" />
+				<entry key="text" value="String" />
+				<entry key="longtext" value="String" />
+				<entry key="blob" value="Byte[]" />
+				<entry key="mediumblob" value="Byte[]" />
+				<entry key="longblob" value="Byte[]" />
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<bean id="mysqlToJdbcTypeMap" class="java.util.HashMap">
+		<constructor-arg>
+			<map key-type="java.lang.String" value-type="java.lang.String">
+				<entry key="tinyint" value="TINYINT" />
+				<entry key="smallint" value="SMALLINT" />
+				<entry key="int" value="INTEGER" />
+				<entry key="bigint" value="BIGINT" />
+				<entry key="float" value="FLOAT" />
+				<entry key="double" value="DOUBLE" />
+				<entry key="decimal" value="DECIMAL" />
+				<entry key="date" value="DATE" />
+				<entry key="time" value="TIME" />
+				<entry key="datetime" value="TIMESTAMP" />
+				<entry key="timestamp" value="TIMESTAMP" />
+				<entry key="year" value="INTEGER" />
+				<entry key="varchar" value="VARCHAR" />
+				<entry key="text" value="LONGVARCHAR" />
+				<entry key="longtext" value="LONGVARCHAR" />
+				<entry key="blob" value="BLOB" />
+				<entry key="mediumblob" value="BLOB" />
+				<entry key="longblob" value="BLOB" />
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<bean id="loopColumnFragMap" class="java.util.HashMap">
+		<constructor-arg>
+			<map key-type="java.lang.String" value-type="org.muque.mold.codes.common.LoopFrag">
+				<entry key="java.loop.frag1">
+					<bean class="org.muque.mold.codes.common.LoopFrag">
+						<property name="path" value="conf/templets/frags/java.loop.frag1.txt"></property>
+					</bean>
+				</entry>
+				<entry key="java.loop.frag2">
+					<bean class="org.muque.mold.codes.common.LoopFrag">
+						<property name="path" value="conf/templets/frags/java.loop.frag2.txt"></property>
+					</bean>
+				</entry>
+				<entry key="xml.loop.frag1">
+					<bean class="org.muque.mold.codes.common.LoopFrag">
+						<property name="concat" value=","></property>
+						<property name="path" value="conf/templets/frags/xml.loop.frag1.txt"></property>
+					</bean>
+				</entry>
+				<entry key="xml.loop.frag2">
+					<bean class="org.muque.mold.codes.common.LoopFrag">
+						<property name="path" value="conf/templets/frags/xml.loop.frag2.txt"></property>
+					</bean>
+				</entry>
+				<entry key="xml.loop.frag3">
+					<bean class="org.muque.mold.codes.common.LoopFrag">
+						<property name="path" value="conf/templets/frags/xml.loop.frag3.txt"></property>
+					</bean>
+				</entry>
+				<entry key="xml.loop.frag4">
+					<bean class="org.muque.mold.codes.common.LoopFrag">
+						<property name="path" value="conf/templets/frags/xml.loop.frag4.txt"></property>
+					</bean>
+				</entry>
+				<entry key="xml.loop.frag5">
+					<bean class="org.muque.mold.codes.common.LoopFrag">
+						<property name="path" value="conf/templets/frags/xml.loop.frag5.txt"></property>
+					</bean>
+				</entry>
+				<entry key="xml.loop.frag6">
+					<bean class="org.muque.mold.codes.common.LoopFrag">
+						<property name="path" value="conf/templets/frags/xml.loop.frag6.txt"></property>
+					</bean>
+				</entry>
+				<entry key="dotnet.loop.frag1">
+					<bean class="org.muque.mold.codes.common.LoopFrag">
+						<property name="path" value="conf/templets/frags/dotnet.loop.frag1.txt"></property>
+					</bean>
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+
+	<bean id="genCodesService" class="org.muque.mold.codes.service.impl.GenCodesServiceImpl">
+		<property name="targetPath" value="E:\\target"></property>
+		<property name="packageName" value="com.saber.easyerp"></property>
+		<property name="databaseName" value="easyerp"></property>
+	</bean>
+
+	<!-- 【启用注解】 -->
+	<context:annotation-config />
+	<!-- spring 扫描设置 -->
+	<context:component-scan base-package="com.mytools" />
+
+</beans>

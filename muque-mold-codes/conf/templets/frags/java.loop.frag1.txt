@@ -1,0 +1,7 @@
+
+	/**
+	* ${columnDes}
+	*/
+	private  ${columnJType} ${columnJName}; 
+	
+			

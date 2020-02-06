@@ -72,5 +72,6 @@
 		<module>muque-common</module>
 		<module>muque-rdb</module>
 		<module>muque-rdb-springboot-starter</module>
+		<module>muque-mold-codes</module>
 	</modules>
 </project>

@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
+        "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="${databaseName}.${tableBeanClass}">
+	<typeAlias alias="${tableBeanClass}"
+		type="${packageName}.dto.${databaseName}.${tableBeanClass}" />
+
+	<sql id="fieldsFragment">
+		${filedCollection}
+	</sql>
+
+	<insert id="insertObject" parameterClass="${tableBeanClass}">
+		INSERT INTO
+		${tableName}(${filedCollectionExcluePK})
+		VALUES(${filedCollectionExcluePKForInsert})
+		<!-- <selectKey keyProperty="${PK}"> select @@IDENTITY as ${PK} </selectKey> -->
+	</insert>
+
+	<delete id="deleteByPK" parameterClass="${PKBeanType}">
+		DELETE FROM ${tableName} WHERE ${PK}=#${PK}#
+	</delete>
+
+	<update id="updateObject" parameterClass="${tableBeanClass}">
+		UPDATE ${tableName} SET
+		${filedCollectionExcluePKForUpdate}
+		WHERE ${PK}=#${PK}#
+	</update>
+
+	<select id="selectObjectByPK" resultClass="${tableBeanClass}">
+		SELECT
+		<include refid="fieldsFragment" />
+		FROM ${tableName}
+		WHERE ${PK}=#${PK}#
+	</select>
+
+	<!-- 分页查询 -->
+	<sql id="whereFragmentWithPage">
+		<dynamic prepend="WHERE">
+			1=1
+		</dynamic>
+	</sql>
+	<select id="selectCountByConditionWithPage" resultClass="${tableBeanClass}"
+		parameterClass="${tableBeanClass}">
+		SELECT count(*) as totalCount
+		FROM ${tableName}
+		<include refid="whereFragmentWithPage" />
+	</select>
+	<select id="selectListByConditionWithPage" resultClass="${tableBeanClass}"
+		parameterClass="${tableBeanClass}">
+		SELECT
+		<include refid="fieldsFragment" />
+		FROM ${tableName}
+		<include refid="whereFragmentWithPage" />
+		LIMIT $startRownum$,$pageSize$
+	</select>
+
+</sqlMap>
