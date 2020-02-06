@@ -30,6 +30,8 @@ public enum ErrorCodeEnum implements ErrorCode {
 	DB_ERROR("7", "获取数据失败~"),
 
 	HTTP_ERROR("8", "内部通信错误"),
+	
+	DATA_ERROR("9", "系统数据异常~"),
 
 	SYSTEM_ERROR("10", "系统出现小异常~");
 
