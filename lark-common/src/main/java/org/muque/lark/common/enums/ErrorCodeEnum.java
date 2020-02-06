@@ -5,7 +5,7 @@ import org.muque.lark.common.ErrorCode;
 import lombok.Getter;
 
 /**
- * 公共错误码
+ * 公共错误码，自定义错误码请从100开始，100以内为系统保留
  * 
  * @author sj.jiang
  * @date 2020年2月4日 下午8:32:44
