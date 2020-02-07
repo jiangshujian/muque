@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.muque.lark.rdb.ext.Pageable;
+import org.muque.lark.rdb.ext.SumMoneyable;
+
 /**
  * 数据访问层查询操作接口.
  * 
@@ -41,11 +44,11 @@ public interface SelectRepository<T, P extends Serializable> extends BaseReposit
 	 * 根据某列汇总
 	 * 
 	 * @param <Q>
-	 * @param <Sumable>
+	 * @param <SumMoneyable>
 	 * @param entity
 	 * @return
 	 */
-	<Q extends T, Sumable> BigDecimal sumByCondition(Q entity);
+	<Q extends SumMoneyable> BigDecimal sumByCondition(Q entity);
 
 	/**
 	 * 分页查询（包含排序功能）
@@ -55,5 +58,5 @@ public interface SelectRepository<T, P extends Serializable> extends BaseReposit
 	 * @param entity
 	 * @return
 	 */
-	<Q extends T, Pageable> List<T> selectByConditionPage(Q entity);
+	<Q extends Pageable> List<T> selectByConditionPage(Q entity);
 }

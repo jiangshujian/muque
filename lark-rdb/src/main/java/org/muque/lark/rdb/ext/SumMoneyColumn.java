@@ -11,7 +11,7 @@ import lombok.Setter;
  * @version V1.0
  */
 @Setter
-public class SumSingleColumn {
+public class SumMoneyColumn {
 	/**
 	 * 汇总的列名
 	 */
