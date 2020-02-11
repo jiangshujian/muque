@@ -62,19 +62,19 @@ public class DataSourceConnectionPoolFactory {
 	private static Object getTypedValue(Type type, String value) {
 		if (type == char.class) {
 			return value.charAt(0);
-		} else if (type == Boolean.class) {
+		} else if (type == Boolean.class || type == boolean.class) {
 			return Boolean.valueOf(value);
-		} else if (type == Byte.class) {
+		} else if (type == Byte.class || type == byte.class) {
 			return Byte.valueOf(value);
-		} else if (type == Short.class) {
+		} else if (type == Short.class || type == short.class) {
 			return Short.valueOf(value);
-		} else if (type == Integer.class) {
+		} else if (type == Integer.class || type == int.class) {
 			return Integer.valueOf(value);
-		} else if (type == Long.class) {
+		} else if (type == Long.class || type == long.class) {
 			return Long.valueOf(value);
-		} else if (type == Float.class) {
+		} else if (type == Float.class || type == float.class) {
 			return Float.valueOf(value);
-		} else if (type == Double.class) {
+		} else if (type == Double.class || type == double.class) {
 			return Double.valueOf(value);
 		} else {
 			return value;
