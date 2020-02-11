@@ -28,7 +28,7 @@ public class DataSourceConnectionPoolFactory {
 		Object obj;
 		try {
 			clazz = DataSourceConnectionPoolFactory.class.getClassLoader()
-					.loadClass(String.format(Constant.DS_CONNECTION_POOL_CLASS_FRT, dsName));
+					.loadClass(env.getProperty(String.format(Constant.DS_CONNECTION_POOL_CLASS_FRT, dsName)));
 			obj = clazz.newInstance();
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			throw new DataSourceConfigException(
