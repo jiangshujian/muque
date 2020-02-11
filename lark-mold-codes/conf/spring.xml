@@ -20,15 +20,6 @@
 		</property>
 	</bean>
 
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://127.0.0.1:3306/easyerp" />
-		<property name="username" value="root" />
-		<property name="password" value="root" />
-	</bean>
-
-
 	<bean id="sourceDaoMysql" class="org.muque.mold.codes.dao.impl.SourceDaoMysqlImpl" />
 
 	<bean id="mysqlToJavaTypeMap" class="java.util.HashMap">
@@ -125,25 +116,27 @@
 						<property name="path" value="conf/templets/frags/xml.loop.frag6.txt"></property>
 					</bean>
 				</entry>
-				<entry key="dotnet.loop.frag1">
-					<bean class="org.muque.mold.codes.common.LoopFrag">
-						<property name="path" value="conf/templets/frags/dotnet.loop.frag1.txt"></property>
-					</bean>
-				</entry>
 			</map>
 		</constructor-arg>
 	</bean>
 
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://139.129.241.244:3306/AuthDB" />
+		<property name="username" value="dev" />
+		<property name="password" value="dev123456" />
+	</bean>
 
 	<bean id="genCodesService" class="org.muque.mold.codes.service.impl.GenCodesServiceImpl">
 		<property name="targetPath" value="E:\\target"></property>
-		<property name="packageName" value="com.saber.easyerp"></property>
-		<property name="databaseName" value="easyerp"></property>
+		<property name="packageName" value="com.muque.raptor.auth.ms"></property>
+		<property name="databaseName" value="AuthDB"></property>
 	</bean>
 
 	<!-- 【启用注解】 -->
 	<context:annotation-config />
 	<!-- spring 扫描设置 -->
-	<context:component-scan base-package="com.mytools" />
+	<context:component-scan base-package="org.muque" />
 
 </beans>

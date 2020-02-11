@@ -41,9 +41,8 @@ public class GenCodesServiceImpl implements GenCodesService {
 
 	private String packageName;
 
-	private static final String templetsTargetPath = PathUtil.getAppConfPath()
-			.concat(PathUtil.getSeparator()).concat("templets")
-			.concat(PathUtil.getSeparator()).concat("target");
+	private static final String templetsTargetPath = PathUtil.getAppConfPath().concat(PathUtil.getSeparator())
+			.concat("templets").concat(PathUtil.getSeparator()).concat("target");
 
 	/*
 	 * (non-Javadoc)
@@ -55,8 +54,7 @@ public class GenCodesServiceImpl implements GenCodesService {
 		try {
 			// 获取模板文件列表
 			System.out.println(">>>>>>模板读取开始....");
-			List<File> templetTargetFiles = FileUtil
-					.listAllFiles(templetsTargetPath);
+			List<File> templetTargetFiles = FileUtil.listAllFiles(templetsTargetPath);
 			for (File f : templetTargetFiles) {
 				if (f.isFile()) {
 					System.out.println("模板文件=>" + f.getPath());
@@ -66,8 +64,7 @@ public class GenCodesServiceImpl implements GenCodesService {
 			}
 			System.out.println(">>>>>>生成代码开始....");
 			// 根据模板生成代码文件
-			List<SourceTable> sourceTables = this.sourceDaoMysql
-					.getTableList(this.databaseName);
+			List<SourceTable> sourceTables = this.sourceDaoMysql.getTableList(this.databaseName);
 			for (File tmplFile : templetTargetFiles) {
 				this.genTargetFileByTempletFile(tmplFile, sourceTables);
 			}
@@ -76,6 +73,7 @@ public class GenCodesServiceImpl implements GenCodesService {
 			System.out.println(">>>>>>清理Bom开始....");
 			CleanBomUtil.cleanBom(targetPath);
 			System.out.println(">>>>>>清理Bom结束....");
+			System.out.println(">>>>>>代码生成完毕:" + this.targetPath + "....");
 		} catch (Exception e) {
 			System.out.println(">>>>>>生成代码异常....");
 			e.printStackTrace();
@@ -88,57 +86,45 @@ public class GenCodesServiceImpl implements GenCodesService {
 	 * @return
 	 * @throws IOException
 	 */
-	private void genTargetFileByTempletFile(File templetFile,
-			List<SourceTable> tabs) throws IOException {
-
-		String targetFilePath = templetFile.getPath().substring(
-				templetsTargetPath.length(), templetFile.getPath().length());
-		targetFilePath = this.replaceDBLevelForPath(targetFilePath);
+	private void genTargetFileByTempletFile(File templetFile, List<SourceTable> tabs) throws IOException {
+		
+		String targetFilePath = templetFile.getPath().substring(templetsTargetPath.length(),
+				templetFile.getPath().length());
+		targetFilePath = this.targetPath.concat(PathUtil.getSeparator())
+				.concat(this.replaceDBLevelForPath(targetFilePath));
 
 		String templetFileContent = "";
 		if (templetFile.isFile()) {
 			templetFileContent = TxtReaderUtil.readToEnd(templetFile.getPath());
 		}
-
-		if (targetFilePath.contains(PlaceholderConst.tableJName)
-				|| targetFilePath.contains(PlaceholderConst.tableJUName)) {
+		if (targetFilePath.contains(PlaceholderConst.TABLE_J_NAME)
+				|| targetFilePath.contains(PlaceholderConst.TABLE_JU_NAME)) {
 			// do loop tables
 			for (SourceTable tab : tabs) {
 				String tableName = tab.getName();
-				String tableJUName = StringUtil.replaceSpecCharAndUpperFirst(
-						tableName, "_");
+				String tableJUName = StringUtil.replaceSpecCharAndUpperFirst(tableName, "_");
 				tab.setJName(StringUtil.lowerFirstChar(tableJUName));
 				tab.setJUName(StringUtil.upperFirstChar(tableJUName));
-				String targetFilePathWithTable = this.replaceTableLevel(
-						targetFilePath, tab);
-
-				targetFilePathWithTable = this.targetPath.concat(
-						PathUtil.getSeparator())
-						.concat(targetFilePathWithTable);
-
+				String targetFilePathWithTable = this.replaceTableLevel(targetFilePath, tab);
 				if (templetFile.isFile()) {
 					// 根据模板生成目标文件
-					String targetFileContentWithTable = this
-							.getTargetFileContent(templetFileContent, tab,
-									targetFilePathWithTable);
-					TxtWriterUtil.write(targetFilePathWithTable,
-							targetFileContentWithTable);
-					System.out.println("生成目标文件=>" + targetFilePathWithTable);
+					String targetFileContentWithTable = this.getTargetFileContent(templetFileContent, tab,
+							targetFilePathWithTable);
+					TxtWriterUtil.write(targetFilePathWithTable, targetFileContentWithTable);
+					System.out.println("生成目标$文件=>" + targetFilePathWithTable);
 				} else {
 					TxtWriterUtil.mkdirs(targetFilePathWithTable);
-					System.out.println("生成目标目录=>" + targetFilePathWithTable);
+					System.out.println("生成目标$目录=>" + targetFilePathWithTable);
 				}
-
-			}// end loop
+			} // end loop
 		} else {
 			// 替换内容
 			if (templetFile.isFile()) {
-				String targettFileContent = this
-						.replaceDBLevel(templetFileContent);
-				TxtWriterUtil.write(targetFilePath, targettFileContent);
+				String targetFileContent = this.replaceDBLevel(templetFileContent);
+				TxtWriterUtil.write(targetFilePath, targetFileContent);
 				System.out.println("生成目标文件=>" + targetFilePath);
 			} else {
-				TxtWriterUtil.mkdirs(targetFilePath);
+				TxtWriterUtil.mkdirs(templetFile.getAbsolutePath());
 				System.out.println("生成目标目录=>" + targetFilePath);
 			}
 		}
@@ -149,12 +135,10 @@ public class GenCodesServiceImpl implements GenCodesService {
 	 * @param src
 	 * @param targFilePath
 	 */
-	private String getTargetFileContent(String src, SourceTable tab,
-			String targFilePath) {
+	private String getTargetFileContent(String src, SourceTable tab, String targFilePath) {
 
 		String target = this.replaceTableLevel(src, tab);
-		List<SourceColumn> cols = this.sourceDaoMysql.getColumnList(
-				this.databaseName, tab.getName());
+		List<SourceColumn> cols = this.sourceDaoMysql.getColumnList(this.databaseName, tab.getName());
 		HashMap<String, LoopFrag> fragMap = this.loopColumnFragMap;
 		// init frag map
 		Iterator<String> iterator = this.loopColumnFragMap.keySet().iterator();
@@ -166,19 +150,15 @@ public class GenCodesServiceImpl implements GenCodesService {
 		// loop column
 		boolean isDoFirstPK = true;
 		for (SourceColumn col : cols) {
-			String columnTemp = StringUtil.replaceSpecCharAndUpperFirst(
-					col.getName(), "_");
+			String columnTemp = StringUtil.replaceSpecCharAndUpperFirst(col.getName(), "_");
 			col.setJName(StringUtil.lowerFirstChar(columnTemp));
 			col.setJUName(StringUtil.upperFirstChar(columnTemp));
-			col.setJdbcType(this.mysqlToJdbcTypeMap.get(col.getDataType()
-					.toLowerCase()));
-			col.setJType(this.mysqlToJavaTypeMap.get(col.getDataType()
-					.toLowerCase()));
+			col.setJdbcType(this.mysqlToJdbcTypeMap.get(col.getDataType().toLowerCase()));
+			col.setJType(this.mysqlToJavaTypeMap.get(col.getDataType().toLowerCase()));
 			if (col.isPrimaryKey() && isDoFirstPK) {
 				tab.setPk(col.getName());
 				tab.setPkJType(col.getJType());
-				tab.setPkJName(StringUtil.lowerFirstChar(StringUtil
-						.replaceSpecCharAndUpperFirst(col.getName(), "_")));
+				tab.setPkJName(StringUtil.lowerFirstChar(StringUtil.replaceSpecCharAndUpperFirst(col.getName(), "_")));
 				isDoFirstPK = false;
 			}
 			Iterator<String> i = fragMap.keySet().iterator();
@@ -204,11 +184,8 @@ public class GenCodesServiceImpl implements GenCodesService {
 	private String replaceDBLevelForPath(String path) {
 		String pathPackageName = this.packageName.replace('.', '\\');
 		String targetFilePath = path;
-		targetFilePath = targetFilePath.replace(PlaceholderConst.packageName,
-				pathPackageName);
-		targetFilePath = targetFilePath.replace(PlaceholderConst.databaseName,
-				this.databaseName);
-
+		targetFilePath = targetFilePath.replace(PlaceholderConst.PACKAGE_NAME, pathPackageName);
+		targetFilePath = targetFilePath.replace(PlaceholderConst.DATABASE_NAME, this.databaseName);
 		return targetFilePath;
 	}
 
@@ -220,9 +197,8 @@ public class GenCodesServiceImpl implements GenCodesService {
 	 */
 	private String replaceDBLevel(String src) {
 		String target = src;
-		target = target.replace(PlaceholderConst.packageName, this.packageName);
-		target = target.replace(PlaceholderConst.databaseName,
-				this.databaseName);
+		target = target.replaceAll(toRgxStr(PlaceholderConst.PACKAGE_NAME), this.packageName);
+		target = target.replaceAll(toRgxStr(PlaceholderConst.DATABASE_NAME), this.databaseName);
 		return target;
 	}
 
@@ -235,11 +211,10 @@ public class GenCodesServiceImpl implements GenCodesService {
 	private String replaceTableLevel(String src, SourceTable tab) {
 		String target = src;
 		target = this.replaceDBLevel(src);
-		target = target.replace(PlaceholderConst.tableName, tab.getName());
-		target = target.replace(PlaceholderConst.tableJName, tab.getJName());
-		target = target.replace(PlaceholderConst.tableJUName, tab.getJUName());
-		target = target
-				.replace(PlaceholderConst.tableDes, tab.getDescription());
+		target = target.replaceAll(toRgxStr(PlaceholderConst.TABLE_NAME), tab.getName());
+		target = target.replaceAll(toRgxStr(PlaceholderConst.TABLE_J_NAME), tab.getJName());
+		target = target.replaceAll(toRgxStr(PlaceholderConst.TABLE_JU_NAME), tab.getJUName());
+		target = target.replaceAll(toRgxStr(PlaceholderConst.TABLE_DES), tab.getDescription());
 		return target;
 	}
 
@@ -251,14 +226,12 @@ public class GenCodesServiceImpl implements GenCodesService {
 	 */
 	private String replaceColumnLevel(String src, SourceColumn col) {
 		String target = src;
-		target = target.replace(PlaceholderConst.column, col.getName());
-		target = target.replace(PlaceholderConst.columnDes,
-				col.getDescription());
-		target = target.replace(PlaceholderConst.columnJName, col.getJName());
-		target = target.replace(PlaceholderConst.columnJUName, col.getJUName());
-		target = target.replace(PlaceholderConst.columnJdbcType,
-				col.getJdbcType());
-		target = target.replace(PlaceholderConst.columnJType, col.getJType());
+		target = target.replaceAll(toRgxStr(PlaceholderConst.COLUMN), col.getName());
+		target = target.replaceAll(toRgxStr(PlaceholderConst.COLUMN_DES), col.getDescription());
+		target = target.replaceAll(toRgxStr(PlaceholderConst.COLUMN_J_NAME), col.getJName());
+		target = target.replaceAll(toRgxStr(PlaceholderConst.COLUMN_J_U_NAME), col.getJUName());
+		target = target.replaceAll(toRgxStr(PlaceholderConst.COLUMN_JDBC_TYPE), col.getJdbcType());
+		target = target.replaceAll(toRgxStr(PlaceholderConst.COLUMN_J_TYPE), col.getJType());
 		return target;
 	}
 
@@ -270,14 +243,13 @@ public class GenCodesServiceImpl implements GenCodesService {
 	 */
 	private String replacePKLevel(String src, SourceTable tab) {
 		String target = src;
-		target = target.replace(PlaceholderConst.PK, tab.getPk());
-		target = target.replace(PlaceholderConst.PKJType, tab.getPkJType());
-		target = target.replace(PlaceholderConst.PKJName, tab.getPkJName());
+		target = target.replaceAll(toRgxStr(PlaceholderConst.PK), tab.getPk());
+		target = target.replaceAll(toRgxStr(PlaceholderConst.PK_J_TYPE), tab.getPkJType());
+		target = target.replaceAll(toRgxStr(PlaceholderConst.PK_J_NAME), tab.getPkJName());
 		return target;
 	}
 
-	private String replaceColumnLoopFrag(String src,
-			HashMap<String, LoopFrag> map) {
+	private String replaceColumnLoopFrag(String src, HashMap<String, LoopFrag> map) {
 		String target = src;
 		Iterator<String> i = map.keySet().iterator();
 		while (i.hasNext()) {
@@ -286,14 +258,24 @@ public class GenCodesServiceImpl implements GenCodesService {
 			if (target.contains(placeholderKey)) {
 				LoopFrag frag = map.get(key);
 				String content = frag.getTargetContent().toString();
-				if (StringUtils.isNotEmpty(frag.getConcat())
-						&& StringUtils.isNotEmpty(content)) {
+				if (StringUtils.isNotEmpty(frag.getConcat()) && StringUtils.isNotEmpty(content)) {
 					content = content.substring(frag.getConcat().length());
 				}
 				target = target.replace(placeholderKey, content);
 			}
 		}
 		return target;
+	}
+	/**
+	 * 
+	 * @param src
+	 * @return
+	 */
+	private String toRgxStr(String src) {
+		String trg=src.replace("$", "\\$");
+		trg=trg.replace("{", "\\{");
+		trg=trg.replace("}", "\\}");
+		return trg;
 	}
 
 	public String getTargetPath() {
@@ -322,10 +304,8 @@ public class GenCodesServiceImpl implements GenCodesService {
 
 	public static void main(String[] args) {
 		try {
-			String path = PathUtil.getAppConfPath()
-					.concat(PathUtil.getSeparator()).concat("templets");
-			String targetPath = path.concat(PathUtil.getSeparator()).concat(
-					"target");
+			String path = PathUtil.getAppConfPath().concat(PathUtil.getSeparator()).concat("templets");
+			String targetPath = path.concat(PathUtil.getSeparator()).concat("target");
 			List<File> files = FileUtil.listAllFiles(targetPath);
 			for (File f : files) {
 				if (f.isFile()) {

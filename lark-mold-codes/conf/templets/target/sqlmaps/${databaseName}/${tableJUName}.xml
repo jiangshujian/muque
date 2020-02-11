@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="${packageName}.${tableJUName}Dao">
+
+	<resultMap id="RM_${tableJUName}" type="${packageName}.dto.${tableJUName}">
+		${xml.loop.frag2}
+	</resultMap>
+
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="${PKJName}">
+		INSERT INTO ${tableName}
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			${xml.loop.frag3}
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			${xml.loop.frag4}
+		</trim>
+		<!-- oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL -->
+		<!-- DB2: order="BEFORE"" values nextval for sequenceName -->
+		<!-- <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId"> 
+			SELECT sequenceName.nextval AS ID FROM DUAL </selectKey> -->
+	</insert>
+
+	<update id="updateNotNull">
+		UPDATE ${tableName}
+		<set>
+			${xml.loop.frag5}
+		</set>
+		WHERE ${PK} = #{${PKJName}}
+	</update>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+		${xml.loop.frag1}
+	</sql>
+
+	<select id="selectById" resultMap="RM_${tableJUName}">
+		SELECT
+		<include refid="columns" />
+		FROM ${tableName}
+		WHERE ${PK} = #{${PKJName}}
+	</select>
+
+	<sql id="condition_where">
+		<where>
+			${xml.loop.frag6}
+		</where>
+	</sql>
+	<select id="countByCondition" resultType="int">
+		SELECT count(1) FROM ${tableName}
+		<include refid="condition_where" />
+	</select>
+	
+	<select id="selectByCondition" resultMap="RM_${tableJUName}">
+		SELECT
+		<include refid="columns" />
+		FROM ${tableName}
+		<include refid="condition_where" />
+	</select>
+	
+	<select id="selectByConditionPage" resultMap="RM_${tableJUName}">
+		SELECT
+		<include refid="columns" />
+		FROM ${tableName}
+		<include refid="condition_where" />
+		<if test="pager.sortable">
+			ORDER BY ${pager.sortColumn} ${pager.sortOrder}
+		</if>
+		LIMIT ${pager.offset},${pager.limit}
+	</select>
+</mapper>
+
