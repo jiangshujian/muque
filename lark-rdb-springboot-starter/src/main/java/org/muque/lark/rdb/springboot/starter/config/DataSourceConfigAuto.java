@@ -44,7 +44,7 @@ public class DataSourceConfigAuto extends DataSourceConfigAbstract {
 			for (DataSourceConfiged item : dscList) {
 				if (item.isDefaultDs()) {
 					// 默认数据源
-					target.setDefaultTargetDataSource(item);
+					target.setDefaultTargetDataSource(item.getDs());
 				}
 				dsMap.put(item.getName(), item.getDs());
 			}

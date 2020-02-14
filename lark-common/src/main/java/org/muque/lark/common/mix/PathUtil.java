@@ -1,113 +1,108 @@
+/**   
+ * @Title: PathUtil.java 
+ * @Package com.dang.rocket.core.util 
+ * @Description: 路径工具，提供App项目、Web项目获取一些路径方法。
+ * @author wmjs  
+ * @date 2014-8-1 上午11:27:01 
+ * @version V1.0   
+ */
 package org.muque.lark.common.mix;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * 路径工具，提供App项目、Web项目获取�?��路径方法�?
- * @author jiangshujian
- * @version 1.0,2013.06.01
+ * 路径工具，提供java项目一些获取的路径方法。
+ * 
+ * @author sj.jiang
+ * @date 2018年2月28日 下午3:15:40
+ * @version V1.0
  */
 public class PathUtil {
 
-	private static final String FOLDER_CONF = "conf";
-	private static final String FOLDER_LIB = "lib";
-	private static final String FOLDER_BIN = "bin";
-	private static final Log log = LogFactory.getLog(PathUtil.class);
+	private static final Logger log = LoggerFactory.getLogger(PathUtil.class);
 
 	/**
-	 * 获取App运行�?��路径<br>
-	 * 注意：如果上级目录为bin或�?lib，获取的是上级目�?
+	 * 获取App运行所在路径。 相对于getAppWorkPath()，该方法获得是原生的路径，没有任何后期处理。
+	 * 
 	 * @return
 	 */
 	public static String getAppPath() {
-		String path = getPropAppPath();
-		if (path.endsWith("\\" + FOLDER_LIB)) {
-			path = path.substring(0, path.length() - 4);
-		}
-		if (path.endsWith("/" + FOLDER_LIB)) {
-			path = path.substring(0, path.length() - 4);
-		}
-		if (path.endsWith(":" + FOLDER_LIB)) {
-			path = path.substring(0, path.length() - 4);
-		}
-		if (path.endsWith("\\" + FOLDER_BIN)) {
-			path = path.substring(0, path.length() - 4);
-		}
-		if (path.endsWith("/" + FOLDER_BIN)) {
-			path = path.substring(0, path.length() - 4);
-		}
-		if (path.endsWith(":" + FOLDER_BIN)) {
-			path = path.substring(0, path.length() - 4);
-		}
-		return path;
-	}
-
-	/**
-	 * 获取App运行�?��路径�?br>
-	 * 相对于getAppPath()，该方法获得是原生的路径，没有任何后期处理�?
-	 * @return
-	 */
-	public static String getPropAppPath() {
 		String path = "";
 		try {
-			File directory = new File("");// 参数为空
+			File directory = new File("");
 			path = directory.getCanonicalPath();
 		} catch (IOException e) {
-			log.error(e);
+			log.error(e.getMessage(), e);
 		}
 		return path;
 	}
 
 	/**
-	 * 获取应用conf路径�?
-	 * @return
-	 */
-	public static String getAppConfPath() {
-		return getAppPath().concat(getSeparator()).concat(FOLDER_CONF);
-	}
-
-	/**
-	 * 获取路径分隔符（兼容windows和linux）�?
-	 * @return
-	 */
-	public static String getSeparator() {
-		String se = System.getProperty("file.separator");
-		return StringUtils.isEmpty(se) ? "\\" : se;
-	}
-
-	/**
-	 * 获取web项目class物理路径<br>
+	 * 获取classpath物理路径<br>
 	 * Thread.currentThread() .getContextClassLoader().getResource("").getPath()
 	 */
-	public static String getWebClassPath() {
-		return Thread.currentThread().getContextClassLoader().getResource("")
-				.getPath();
+	public static String getClassPath() {
+		return Thread.currentThread().getContextClassLoader().getResource("").getPath();
 	}
 
 	/**
-	 * linux path 处理�?br>
-	 * 将路径中�?\"统一换成"/"�?
+	 * linux path 处理。<br>
+	 * 将路径中的"\"统一换成"/"。
 	 * 
 	 * @param path
 	 * @return
 	 */
-	public static String getPath(String path) {
-		String pathTemp = path;
-		String osName = System.getProperty("os.name");
-		if (!osName.toUpperCase().startsWith("WIN")) {
-			pathTemp = pathTemp.replaceAll("\\\\", "/");
-			pathTemp = pathTemp.replaceAll("\\/", "//");
-		}
-		return pathTemp;
+	public static String formatPath(String path) {
+		String target = path;
+		target = target.replaceAll("\\\\", "/");
+		target = target.replaceAll("\\/", "//");
+		target = target.replaceAll("(\\/){4,}", "//");
+		return target;
 	}
 
-	public static void main(String[] args) {
-		System.out.println(System.getProperty("os.name"));
-		System.out.println(getPath("D:/a/b"));
+	/**
+	 * 
+	 * 获取路径分隔符syetem property:file.separator（兼容windows和linux）。
+	 * 
+	 * @return
+	 */
+	public static String separator() {
+		String se = System.getProperty("file.separator");
+		return StringUtils.isEmpty(se) ? "\\" : se;
+	}
+
+	public static PathUtilBuilder builder() {
+		return new PathUtilBuilder();
+	}
+
+	/**
+	 * 路径工具
+	 * 
+	 * @author sj.jiang
+	 * @date 2018年2月28日 下午3:19:02
+	 * @version V1.0
+	 */
+	public static class PathUtilBuilder {
+		private StringBuilder sb = new StringBuilder();
+
+		public PathUtilBuilder append(String source) {
+			if (null != source)
+				sb.append(source);
+			return this;
+		}
+
+		public PathUtilBuilder separator() {
+			sb.append(PathUtil.separator());
+			return this;
+		}
+
+		public String build() {
+			return PathUtil.formatPath(sb.toString());
+		}
 	}
 }
