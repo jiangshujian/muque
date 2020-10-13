@@ -10,7 +10,7 @@
 	<artifactId>lark-mold-codes</artifactId>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<junit.version>4.9</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<commons.lang.version>2.6</commons.lang.version>
 		<spring.version>3.2.9.RELEASE</spring.version>
 		<spring-security.version>3.2.4.RELEASE</spring-security.version>
