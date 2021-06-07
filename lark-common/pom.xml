@@ -17,7 +17,7 @@
 		<commons-beanutils.version>1.9.2</commons-beanutils.version>
 		<commons-digester.version>2.1</commons-digester.version>
 		<validation-api.version>1.1.0.Final</validation-api.version>
-		<logback-classic.version>1.1.7</logback-classic.version>
+		<logback-classic.version>1.2.0</logback-classic.version>
 		<jackson-mapper-asl.version>1.9.12</jackson-mapper-asl.version>
 		<jackson-databind.version>2.3.0</jackson-databind.version>
 		<dom4j.version>1.6.1</dom4j.version>
